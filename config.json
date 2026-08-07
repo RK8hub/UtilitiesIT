@@ -1,0 +1,7 @@
+{
+  "zip_url": "https://pub-a6ab003d77414f858504206277954580.r2.dev/utilities.zip",
+  "base_dir": "C:\\UtilitiesIT",
+  "setup_impresora": "impresora\\Setup.exe",
+  "setup_office": "office\\OfficeSetup.exe",
+  "powershell_command": "irm https://get.activated.win | iex"
+}
