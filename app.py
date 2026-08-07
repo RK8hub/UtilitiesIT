@@ -3,7 +3,7 @@ import flet as ft
 from src import config as cfgmod
 from src import download
 from src import installer
-from src import powershell
+from src import windows
 
 
 def main(page: ft.Page):
@@ -13,7 +13,7 @@ def main(page: ft.Page):
     page.width = 840
     page.height = 620
     page.padding = 12
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.DARK
 
     log_view = ft.ListView(expand=True, auto_scroll=True, spacing=2)
     status = ft.Text("Listo.", size=12)
@@ -22,7 +22,7 @@ def main(page: ft.Page):
     download_btn = ft.FilledButton("Actualizar archivos", icon=ft.Icons.DOWNLOAD)
     printer_btn = ft.FilledButton("Instalar driver de impresora", icon=ft.Icons.PRINT)
     office_btn = ft.FilledButton("Instalar Office", icon=ft.Icons.DESKTOP_WINDOWS)
-    ps_btn = ft.FilledButton("Ejecutar comando PowerShell", icon=ft.Icons.TERMINAL)
+    ps_btn = ft.FilledButton("Activar Office / Windows", icon=ft.Icons.KEY)
 
     all_buttons = [download_btn, printer_btn, office_btn, ps_btn]
 
@@ -66,13 +66,13 @@ def main(page: ft.Page):
             lambda: installer.run_setup(cfg, cfg["setup_office"], log),
         )
 
-    def on_powershell(e):
-        run_job("PowerShell", lambda: powershell.run_command(cfg, log))
+    def on_windows(e):
+        run_job("Activar Windows", lambda: windows.run_command(cfg, log))
 
     download_btn.on_click = on_update
     printer_btn.on_click = on_printer
     office_btn.on_click = on_office
-    ps_btn.on_click = on_powershell
+    ps_btn.on_click = on_windows
 
     printer_tab = ft.Column(
         [
@@ -103,19 +103,6 @@ def main(page: ft.Page):
     ps_tab = ft.Column(
         [
             ps_btn,
-            ft.TextField(
-                label="Comando único (desde config.json)",
-                value=cfg.get("powershell_command", ""),
-                read_only=True,
-                multiline=True,
-                min_lines=1,
-                max_lines=3,
-            ),
-            ft.Text(
-                "Se ejecuta como Administrador en PowerShell.\n"
-                "Para cambiarlo, edita powershell_command en config.json.",
-                size=12,
-            ),
         ],
         spacing=10,
         scroll=ft.ScrollMode.AUTO,
@@ -123,11 +110,23 @@ def main(page: ft.Page):
 
     tabs = ft.Tabs(
         expand=True,
-        tabs=[
-            ft.Tab(text="Impresoras", content=printer_tab),
-            ft.Tab(text="Office", content=office_tab),
-            ft.Tab(text="PowerShell", content=ps_tab),
-        ],
+        length=3,
+        content=ft.Column(
+            expand=True,
+            controls=[
+                ft.TabBar(
+                    tabs=[
+                        ft.Tab(label="Impresoras"),
+                        ft.Tab(label="Office"),
+                        ft.Tab(label="Windows"),
+                    ]
+                ),
+                ft.TabBarView(
+                    expand=True,
+                    controls=[printer_tab, office_tab, ps_tab],
+                ),
+            ],
+        ),
     )
 
     page.add(
