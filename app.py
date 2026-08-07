@@ -1,3 +1,6 @@
+import os
+import sys
+
 import flet as ft
 
 from src import config as cfgmod
@@ -6,29 +9,33 @@ from src import installer
 from src import windows
 
 
+def resource_path(relative):
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, relative)
+
+
 def main(page: ft.Page):
     cfg = cfgmod.load()
 
-    page.title = "Vinna"
+    page.title = "Itel-IT-Utilities"
     page.width = 840
     page.height = 620
     page.padding = 12
-    page.theme_mode = ft.ThemeMode.DARK
+    page.theme_mode = ft.ThemeMode.SYSTEM
+    page.window.icon = resource_path(os.path.join("assets", "window_icon.ico"))
 
     log_view = ft.ListView(expand=True, auto_scroll=True, spacing=2)
-    status = ft.Text("Listo.", size=12)
     progress = ft.ProgressBar(visible=False)
 
     download_btn = ft.FilledButton("Actualizar archivos", icon=ft.Icons.DOWNLOAD)
-    printer_btn = ft.FilledButton("Instalar driver de impresora", icon=ft.Icons.PRINT)
-    office_btn = ft.FilledButton("Instalar Office", icon=ft.Icons.DESKTOP_WINDOWS)
+    printer_btn = ft.FilledButton("Driver de impresora Versalink BT025", icon=ft.Icons.PRINT)
+    office_btn = ft.FilledButton("Instalar Microsoft 365", icon=ft.Icons.DESKTOP_WINDOWS)
     ps_btn = ft.FilledButton("Activar Office / Windows", icon=ft.Icons.KEY)
 
     all_buttons = [download_btn, printer_btn, office_btn, ps_btn]
 
     def log(msg: str):
         log_view.controls.append(ft.Text(msg, size=12))
-        status.value = msg
         page.update()
 
     def set_busy(busy: bool):
@@ -78,8 +85,7 @@ def main(page: ft.Page):
         [
             printer_btn,
             ft.Text(
-                f"Ejecuta el instalador del driver descargado.\n"
-                f"Ruta: {cfg['base_dir']}\\{cfg['setup_impresora']}",
+                f"Ejecuta el instalador del driver descargado.\n",
                 size=12,
             ),
         ],
@@ -91,8 +97,7 @@ def main(page: ft.Page):
         [
             office_btn,
             ft.Text(
-                f"Ejecuta el instalador de Office descargado.\n"
-                f"Ruta: {cfg['base_dir']}\\{cfg['setup_office']}",
+                f"Ejecuta el instalador de Office descargado.\n",
                 size=12,
             ),
         ],
@@ -103,6 +108,10 @@ def main(page: ft.Page):
     ps_tab = ft.Column(
         [
             ps_btn,
+            ft.Text(
+                f"Ejecuta un activador de licencias.\n",
+                size=12,
+            ),
         ],
         spacing=10,
         scroll=ft.ScrollMode.AUTO,
@@ -118,7 +127,7 @@ def main(page: ft.Page):
                     tabs=[
                         ft.Tab(label="Impresoras"),
                         ft.Tab(label="Office"),
-                        ft.Tab(label="Windows"),
+                        ft.Tab(label="Activaciones"),
                     ]
                 ),
                 ft.TabBarView(
@@ -136,9 +145,8 @@ def main(page: ft.Page):
         ft.Divider(),
         ft.Row(
             [
-                ft.Text("Bitácora", weight=ft.FontWeight.BOLD, size=13),
-                ft.Container(expand=True),
-                status,
+                ft.Text("Run time", weight=ft.FontWeight.BOLD, size=13),
+                ft.Container(expand=True)
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         ),

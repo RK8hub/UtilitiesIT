@@ -18,6 +18,7 @@ flet pack app.py `
     --name Vinna `
     --uac-admin `
     --add-data "config.json:." `
+    --add-data "assets\window_icon.ico:assets" `
     --product-name Vinna `
     --file-description "Utilidades internas IT" `
     --company-name "IT" `
